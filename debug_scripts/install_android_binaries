@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+
+import argparse
+import os
+import subprocess
+
+parser = argparse.ArgumentParser(description="Sets up the device binaries for debugging. This has to be done for each android device once")
+parser.add_argument("-o", "--output", type=str, default="~/android_bin/", help="Directory where the device binaries should be copied. Default is ~/android_bin")
+parser.add_argument("-d", "--device", type=str, help="Target device. If not set the first device in 'adb devices' is chosen")
+args = parser.parse_args()
+
+android_bin = args.output
+if android_bin[-1] != "/":
+  android_bin = android_bin + "/"
+
+device = args.device
+if not device:
+  cmd = subprocess.Popen(['adb', 'devices'], stdout=subprocess.PIPE)
+  device = cmd.stdout.read().decode().split('\n')[1].split('\t')[0];
+  if not device: 
+    raise NameError("No devices mounted")
+
+print("Copy binaries from " + device)
+print("This may take a while, please wait...")
+subprocess.check_call("mkdir -p " + android_bin + "system_lib", shell=True)
+subprocess.check_call("mkdir -p " + android_bin + "vendor_lib", shell=True)
+subprocess.check_call("adb -s " + device + " pull /system/bin/app_process " + android_bin, shell=True)
+subprocess.check_call("adb -s " + device + " pull /system/bin/linker " + android_bin, shell=True)
+subprocess.check_call("adb -s " + device + " pull /system/lib " + android_bin + "system_lib", shell=True)
+subprocess.check_call("adb -s " + device + " pull /vendor/lib " + android_bin + "vendor_lib", shell=True)
+print("done")

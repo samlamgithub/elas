@@ -1,0 +1,71 @@
+#!/usr/bin/env python
+
+import argparse
+import fileinput
+import os.path
+import re
+import subprocess
+import xml.etree.ElementTree as ET
+
+parser = argparse.ArgumentParser(description="Set up project to build debug symbols and install the gdbserver");
+parser.add_argument("--app_main", type=str, default="./", help="Main directory of application build folder")
+parser.add_argument("--ndk_dir", type=str, default="/vol/bitbucket/bjm113/android-ndk-r10e/", help="Directory of the Android-NDK. Default is /vol/bitbucket/bjm113/android-ndk-r10e/")
+args = parser.parse_args()
+
+ndk_dir = args.ndk_dir
+if ndk_dir[-1] != "/":
+  ndk_dir = ndk_dir + "/"
+
+app_main = args.app_main
+if app_main[-1] != "/": 
+  app_main = app_main + "/"
+
+gdbserver_filename = ndk_dir + "prebuilt/android-arm/gdbserver/gdbserver"
+if not os.path.isfile(gdbserver_filename):
+  raise NameError("NDK path is not correct")
+
+subprocess.check_call("cp " + gdbserver_filename + " " + app_main + "libs/armeabi-v7a/gdbserver.so", shell=True)
+
+android_manifest = app_main + "AndroidManifest.xml"
+if not os.path.isfile(android_manifest):
+  raise NameError("App path is not correct")
+
+tree = ET.parse(android_manifest)
+ET.register_namespace('android', 'http://schemas.android.com/apk/res/android')
+root = tree.getroot()
+for node in tree.getroot().findall("./application"):
+  node.set('{http://schemas.android.com/apk/res/android}debuggable', 'true')
+tree.write(android_manifest)
+
+make_filename = app_main + "jni/Android.mk"
+if not os.path.isfile(make_filename):
+  raise NameError("Android.mk does not exist")
+
+is_cflags_set = False
+is_cc_set = False
+for linenum,line in enumerate(fileinput.FileInput(make_filename, inplace=1)):
+  if "LOCAL_CFLAGS" in line:
+    is_cflags_set = True
+    m = re.search('\s*LOCAL_CFLAGS\s*:=.*\-g', line)
+    if not m:
+      print(line[:-1] + " -g")
+    else:
+      print(line[:-1])
+  else:
+    if "LOCAL_CC" in line:
+      is_cc_set = True
+      m = re.match('\s*LOCAL_CC\s*:=\s*\/usr\/bin\/gcc\-4\.8', line)
+      if not m:
+        print("LOCAL_CC\t:= /usr/bin/gcc-4.8")
+      else:
+        print(line[:-1])
+    else:
+      print(line[:-1])
+
+if not is_cflags_set or not is_cc_set:
+  make_file = open(make_filename, 'a');
+  if not is_cflags_set:
+    make_file.write("LOCAL_CFLAGS\t:= -g\n")
+  if not is_cc_set:
+    make_file.write("LOCAL_CC\t:= /usr/bin/gcc-4.8\n")
+  make_file.close()

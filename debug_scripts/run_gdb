@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+
+import argparse
+import os.path
+import subprocess
+import time
+import xml.etree.ElementTree as ET
+
+parser = argparse.ArgumentParser(description="Initializes remote gdbserver and connects with the local gdb client")
+parser.add_argument("--ndk_dir", type=str, default="/opt/android-ndk/", help="Directory of the Android-NDK. Default is /opt/android-ndk")
+parser.add_argument("--app_main", type=str, default="./", help="Main folder of our build directory. Default is the current directory")
+parser.add_argument("--android_bin", type=str, default="~/android_bin/", help="Folder of the android libraries")
+parser.add_argument("-d", "--device", type=str, help="Target device. If not set the first device in 'adb devices' is chosen")
+parser.add_argument("-p", "--port", type=int, default=5039, help="Port the gdbserver will open")
+parser.add_argument("-t", "--timeout", type=int, default=1, help="Delay to wait for the server startup")
+args = parser.parse_args()
+
+app_main = args.app_main
+if app_main[-1] != "/":
+  app_main = app_main + "/"
+
+ndk_dir = args.ndk_dir
+if ndk_dir[-1] != "/":
+  ndk_dir = ndk_dir + "/"
+
+android_bin = args.android_bin
+if android_bin[-1] != "/":
+  android_bin = android_bin + "/"
+
+android_manifest = app_main + "AndroidManifest.xml"
+if not os.path.isfile(android_manifest):
+  raise NameError("AndroidManifest.xml does not exist")
+
+tree = ET.parse(android_manifest)
+ET.register_namespace('android', 'http://schemas.android.com/apk/res/android')
+project_name = tree.getroot().get('package')
+
+device = args.device
+if not device:
+  cmd = subprocess.Popen(['adb', 'devices'], stdout=subprocess.PIPE)
+  device = cmd.stdout.read().decode().split('\n')[1].split('\t')[0];
+  if not device: 
+    raise NameError("No devices mounted")
+
+proc = subprocess.Popen("adb -s " + device + " shell ps | grep " + project_name + " | awk \'{ print $2 }\'", stdout=subprocess.PIPE, shell=True)
+pid = proc.stdout.read().decode()
+if not pid:
+  raise NameError("Process \"" + project_name + "\" is not running")
+
+subprocess.check_call("adb -s " + device + " forward tcp:" + str(args.port) + " localfilesystem:/data/data/" + project_name + "/debug-pipe", shell=True)
+
+gdbserver = subprocess.Popen("adb -s " + device + " shell run-as " + project_name + " /data/data/" + project_name + "/lib/gdbserver.so +debug-pipe --attach " + pid, shell=True, stdout=subprocess.PIPE)
+
+time.sleep(args.timeout)
+
+subprocess.check_call(ndk_dir + "toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-gdb  -ex=\"target remote :" + str(args.port) + "\" -ex=\"set solib-search-path " + android_bin + ":" + android_bin + "system_lib:" + android_bin + "vendor_lib:" + app_main + "obj/local/armeabi-v7a\" " + android_bin + "app_process", shell=True)
+
+gdbserver.terminate()
+

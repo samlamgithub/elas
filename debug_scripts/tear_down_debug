@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+
+import argparse
+import fileinput
+import os.path
+import re
+import subprocess
+import xml.etree.ElementTree as ET
+
+parser = argparse.ArgumentParser(description="Tears down the setup for debugging in the build project")
+parser.add_argument("--app_main", type=str, default="./", help="Main directory of application build folder")
+args = parser.parse_args()
+
+app_main = args.app_main
+if app_main[-1] != "/": 
+  app_main = app_main + "/"
+
+gdbserver_filename = app_main + "libs/armeabi-v7a/gdbserver.so"
+if os.path.isfile(gdbserver_filename): 
+  subprocess.check_call("rm -f " + gdbserver_filename, shell=True)
+
+android_manifest = app_main + "AndroidManifest.xml"
+if not os.path.isfile(android_manifest):
+  raise NameError("App path is not correct")
+
+tree = ET.parse(android_manifest)
+ET.register_namespace('android', 'http://schemas.android.com/apk/res/android')
+root = tree.getroot()
+for node in tree.getroot().findall("./application"):
+  key = '{http://schemas.android.com/apk/res/android}debuggable'
+  if key in node.attrib:
+    node.attrib.pop(key)
+tree.write(android_manifest)
+
+make_filename = app_main + "jni/Android.mk"
+if not os.path.isfile(make_filename):
+  raise NameError("Android.mk does not exist")
+
+for linenum,line in enumerate(fileinput.FileInput(make_filename, inplace=1)):
+  if "LOCAL_CFLAGS" in line:
+    m = re.match('^(\s*LOCAL_CFLAGS\s*:=.*)\-g(.*)$', line)
+    if m:
+      print(m.group(1) + m.group(2)[:-1])
+    else:
+      print(line[:-1])
+  else:
+    print(line[:-1])
