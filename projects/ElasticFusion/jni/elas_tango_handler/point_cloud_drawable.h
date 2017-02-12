@@ -1,13 +1,13 @@
 
-#ifndef TANGO_POINT_CLOUD_POINT_CLOUD_DRAWABLE_H_
-#define TANGO_POINT_CLOUD_POINT_CLOUD_DRAWABLE_H_
+#ifndef ELAS_TANGO_HANDLER_POINT_CLOUD_DRAWABLE_H_
+#define ELAS_TANGO_HANDLER_POINT_CLOUD_DRAWABLE_H_
 
 #include <jni.h>
 #include <vector>
 
 #include <tango-gl/util.h>
 
-namespace hello_motion_tracking {
+namespace elas_tango_handler {
 
 // PointCloudDrawable is responsible for the point cloud rendering.
 class PointCloudDrawable {
@@ -40,4 +40,4 @@ class PointCloudDrawable {
 };
 }  // namespace tango_point_cloud
 
-#endif  // TANGO_POINT_CLOUD_POINT_CLOUD_DRAWABLE_H_
+#endif  // ELAS_TANGO_HANDLER_POINT_CLOUD_DRAWABLE_H_

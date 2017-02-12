@@ -1,5 +1,5 @@
-#ifndef HELLO_MOTION_TRACKING_TANGO_HANDLER_H_
-#define HELLO_MOTION_TRACKING_TANGO_HANDLER_H_
+#ifndef ELAS_TANGO_HANDLER_TANGO_HANDLER_H_
+#define ELAS_TANGO_HANDLER_TANGO_HANDLER_H_
 
 #include <android/log.h>
 #include <jni.h>
@@ -9,13 +9,14 @@
 #include <cstdlib>
 #include <atomic>
 #include <tango-gl/util.h>
+
+#include "../elas_tango_handler/scene.h"
 #include "tango_client_api.h"   // NOLINT
 #include "tango_support_api.h"  // NOLINT
-#include <hello_motion_tracking/scene.h>
 
-#define LOG_TAG "cpp_hello_motion_tracking"
+#define LOG_TAG "elas_tango_demo"
 
-namespace hello_motion_tracking {
+namespace elas_tango_handler {
 // TangoHandler provides functionality to communicate with the Tango Service.
 class TangoHandler {
  public:
@@ -134,6 +135,6 @@ class TangoHandler {
   std::atomic<bool> is_service_connected_;
   std::atomic<bool> is_gl_initialized_;
 };
-}  // namespace hello_motion_tracking
+}  // namespace elas_tango_handler
 
-#endif  // HELLO_MOTION_TRACKING_TANGO_HANDLER_H_
+#endif  // ELAS_TANGO_HANDLER_TANGO_HANDLER_H_

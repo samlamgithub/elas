@@ -1,6 +1,6 @@
-#include <sstream>
+#include "elas_tango_handler/point_cloud_drawable.h"
 
-#include "hello_motion_tracking/point_cloud_drawable.h"
+#include <sstream>
 
 namespace {
 const std::string kPointCloudVertexShader =
@@ -23,7 +23,7 @@ const std::string kPointCloudFragmentShader =
 
 }  // namespace
 
-namespace hello_motion_tracking {
+namespace elas_tango_handler {
 
 PointCloudDrawable::PointCloudDrawable() {
   shader_program_ = tango_gl::util::CreateProgram(
@@ -66,4 +66,4 @@ void PointCloudDrawable::Render(glm::mat4 projection_mat, glm::mat4 view_mat,
   tango_gl::util::CheckGlError("Pointcloud::Render()");
 }
 
-}  // namespace hello_motion_tracking
+}  // namespace elas_tango_handler

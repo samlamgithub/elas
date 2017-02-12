@@ -1,10 +1,10 @@
 #define GLM_FORCE_RADIANS
 #include <jni.h>
 
-#include "hello_motion_tracking/tango_handler.h"
-#include "hello_motion_tracking/scene.h"
+#include "elas_tango_handler/tango_handler.h"
+#include "elas_tango_handler/scene.h"
 
-static hello_motion_tracking::TangoHandler tango_handler;
+static elas_tango_handler::TangoHandler tango_handler;
 
 #ifdef __cplusplus
 extern "C" {

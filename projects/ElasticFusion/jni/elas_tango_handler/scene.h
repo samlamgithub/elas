@@ -1,7 +1,5 @@
-
-
-#ifndef TANGO_POINT_CLOUD_SCENE_H_
-#define TANGO_POINT_CLOUD_SCENE_H_
+#ifndef ELAS_TANGO_HANDLER_SCENE_H_
+#define ELAS_TANGO_HANDLER_SCENE_H_
 
 #include <jni.h>
 #include <memory>
@@ -18,9 +16,9 @@
 #include <tango-gl/transform.h>
 #include <tango-gl/util.h>
 
-#include <hello_motion_tracking/point_cloud_drawable.h>
+#include "../elas_tango_handler/point_cloud_drawable.h"
 
-namespace hello_motion_tracking {
+namespace elas_tango_handler {
 
 // Scene provides OpenGL drawable objects and renders them for visualization.
 class Scene {
@@ -89,4 +87,4 @@ class Scene {
 };
 }  // namespace tango_point_cloud
 
-#endif  // TANGO_POINT_CLOUD_SCENE_H_
+#endif  // ELAS_TANGO_HANDLER_SCENE_H_

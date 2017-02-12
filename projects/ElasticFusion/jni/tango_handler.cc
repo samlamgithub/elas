@@ -1,12 +1,11 @@
+#include "elas_tango_handler/tango_handler.h"
 #include <cstdlib>
 #include <random>
 #include <algorithm>
 #include <cstdio>
 #include <sstream>
-
 #include <tango-gl/conversions.h>
 #include <tango_support_api.h>
-#include "hello_motion_tracking/tango_handler.h"
 
 namespace {
 
@@ -18,7 +17,6 @@ void onPoseAvailable(void* context, const TangoPoseData* pose) {
        pose->orientation[0], pose->orientation[1], pose->orientation[2],
        pose->orientation[3]);
 }
-
 
 // This function routes onPointCloudAvailable callbacks to the application
 // object for handling.
@@ -45,18 +43,16 @@ void onPoseAvailable(void* context, const TangoPoseData* pose) {
     	  LOGI("HelloDepthPerceptionApp: Point count: %d. Average depth (m): %.3f",
     	       point_cloud->num_points, average_depth);
 
-    	  hello_motion_tracking::TangoHandler* handler =
-              static_cast<hello_motion_tracking::TangoHandler*>(context);
+    	  elas_tango_handler::TangoHandler* handler =
+              static_cast<elas_tango_handler::TangoHandler*>(context);
     	  handler->onPointCloudAvailable(point_cloud);
     }
-
 }  // anonymous namespace.
 
-namespace hello_motion_tracking {
-
+namespace elas_tango_handler {
 	void TangoHandler::onPointCloudAvailable(const TangoPointCloud* point_cloud) {
 		 TangoSupport_updatePointCloud(point_cloud_manager_, point_cloud);
-	   }
+	}
 
 	TangoHandler::TangoHandler()
 	            : screen_rotation_(0),
@@ -423,4 +419,4 @@ namespace hello_motion_tracking {
       screen_rotation_ = screen_rotation;
     }
 
-}  // namespace hello_motion_tracking
+}  // namespace elas_tango_handler

@@ -5,12 +5,6 @@ import android.content.res.AssetManager;
 import android.os.IBinder;
 import android.util.Log;
 
-/**
- * JNI Interface
- * @author bjm113
- *
- */
-
 public class TangoJniNative {
     static {
 //    	   if (TangoInitializationHelper.loadTangoSharedLibrary() ==

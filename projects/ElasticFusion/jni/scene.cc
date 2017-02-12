@@ -1,7 +1,6 @@
+#include "elas_tango_handler/scene.h"
 
 #include <tango-gl/conversions.h>
-
-#include "hello_motion_tracking/scene.h"
 
 namespace {
 // We want to represent the device properly with respect to the ground so we'll
@@ -20,7 +19,7 @@ const tango_gl::Color kGridColor(0.85f, 0.85f, 0.85f);
 const glm::vec3 kFrustumScale = glm::vec3(0.4f, 0.3f, 0.5f);
 }  // namespace
 
-namespace hello_motion_tracking {
+namespace elas_tango_handler {
 
 Scene::Scene() {}
 
@@ -123,4 +122,4 @@ void Scene::OnTouchEvent(int touch_count,
   gesture_camera_->OnTouchEvent(touch_count, event, x0, y0, x1, y1);
 }
 
-}  // namespace hello_motion_tracking
+}  // namespace elas_tango_handler
