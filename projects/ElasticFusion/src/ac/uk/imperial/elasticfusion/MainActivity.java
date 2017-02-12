@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 //	private CameraOverlay mOverlay;//action_settings
 	
-	 ServiceConnection mTangoServiceConnection = new ServiceConnection() {
+	ServiceConnection mTangoServiceConnection = new ServiceConnection() {
 	      public void onServiceConnected(ComponentName name, IBinder service) {
 	        TangoJniNative.onTangoServiceConnected(service);
 	      }
@@ -63,8 +63,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	        // Handle this if you need to gracefully shutdown/retry
 	        // in the event that Tango itself crashes/gets upgraded while running.
 	      }
-	    };
-
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
