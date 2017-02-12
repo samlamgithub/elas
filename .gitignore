@@ -1,0 +1,10 @@
+*.DS_Store
+*.idea
+*.iml
+*.apk
+*.ap_
+*bin/
+*.class
+*.dex
+*gen/
+*local.properties
