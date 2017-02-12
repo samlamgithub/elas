@@ -8,7 +8,60 @@
     android:paddingTop="@dimen/activity_vertical_margin"
      tools:context="ac.uk.imperial.elasticfusion.MainActivity" >
 
-    <TextView
+    
+    
+    <android.opengl.GLSurfaceView
+        android:id="@+id/gl_surface_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="top" />
+    
+    
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical"
+        android:paddingLeft="5dp" >
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/average_depth" />
+
+            <TextView
+                android:id="@+id/average_depth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/point_count" />
+
+            <TextView
+                android:id="@+id/point_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        
+        <LinearLayout 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"  >
+             <TextView
          android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,10 +70,46 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
         android:layout_marginTop="12dp"
         android:text="@string/default_string"
-        android:id="@+id/poseText"
-        android:layout_alignParentStart="true" />
+        android:id="@+id/poseText" />
+            
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/first_person_button"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/third_person_button"
+        android:layout_alignLeft="@+id/third_person_button"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/first_person" />
+
+    <Button
+        android:id="@+id/top_down_button"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/top_down" />
+
+    <Button
+        android:id="@+id/third_person_button"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/top_down_button"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/third_person" />
+    
+   
 
 </RelativeLayout>

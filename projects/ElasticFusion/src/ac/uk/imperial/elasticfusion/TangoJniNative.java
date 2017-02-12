@@ -39,5 +39,31 @@ public class TangoJniNative {
     public static native void onCreate(Activity callerActivity);
     public static native void onTangoServiceConnected(IBinder binder);
     public static native void onPause();
+    
+    // Allocate OpenGL resources for rendering.
+    public static native void onGlSurfaceCreated();
+
+    // Setup the view port width and height.
+    public static native void onGlSurfaceChanged(int width, int height);
+
+    // Main render loop.
+    public static native void onGlSurfaceDrawFrame();
+
+    // Set the render camera's viewing angle:
+    //   first person, third person, or top down.
+    public static native void setCamera(int cameraIndex);
+
+    // Get total point count in current depth frame.
+    public static native int getVerticesCount();
+
+    // Get average depth (in meters) in current depth frame.
+    public static native float getAverageZ();
+    
     public static native String getData();
+
+    // Pass touch events to the native layer.
+    public static native void onTouchEvent(int touchCount, int event0,
+                                           float x0, float y0, float x1, float y1);
+
+    public static native void setScreenRotation(int orienationIndex);
 }

@@ -1,4 +1,5 @@
 LOCAL_PATH := $(call my-dir)
+PROJECT_ROOT_FROM_JNI:= ../..
 PROJECT_ROOT:= $(call my-dir)/../..
 
 include $(CLEAR_VARS)
@@ -9,10 +10,25 @@ LOCAL_SHARED_LIBRARIES := tango_client_api \
                           tango_support_api
 LOCAL_CFLAGS           := -Werror -std=c++11  -O0 -g -D__ANDROID__
 
-LOCAL_SRC_FILES := tango_handler.cc \
-                   jni_interface.cc
+LOCAL_SRC_FILES := point_cloud_drawable.cc \
+                   scene.cc \
+				   tango_handler.cc \
+                   jni_interface.cc \
+                   $(PROJECT_ROOT_FROM_JNI)/tango_gl/axis.cc \
+                   $(PROJECT_ROOT_FROM_JNI)/tango_gl/camera.cc \
+                   $(PROJECT_ROOT_FROM_JNI)/tango_gl/conversions.cc \
+                   $(PROJECT_ROOT_FROM_JNI)/tango_gl/drawable_object.cc \
+                   $(PROJECT_ROOT_FROM_JNI)/tango_gl/frustum.cc \
+                   $(PROJECT_ROOT_FROM_JNI)/tango_gl/gesture_camera.cc \
+                   $(PROJECT_ROOT_FROM_JNI)/tango_gl/grid.cc \
+                   $(PROJECT_ROOT_FROM_JNI)/tango_gl/line.cc \
+                   $(PROJECT_ROOT_FROM_JNI)/tango_gl/shaders.cc \
+                   $(PROJECT_ROOT_FROM_JNI)/tango_gl/trace.cc \
+                   $(PROJECT_ROOT_FROM_JNI)/tango_gl/transform.cc \
+                   $(PROJECT_ROOT_FROM_JNI)/tango_gl/util.cc
            
-LOCAL_C_INCLUDES := $(PROJECT_ROOT)/tango_gl/include \
+LOCAL_C_INCLUDES := $(PROJECT_ROOT)/tango-service-sdk/include/ \
+					$(PROJECT_ROOT)/tango_gl/include \
                     $(PROJECT_ROOT)/third_party/glm/               
 
 LOCAL_LDLIBS           := -landroid -llog -lGLESv3 -L$(SYSROOT)/usr/lib
