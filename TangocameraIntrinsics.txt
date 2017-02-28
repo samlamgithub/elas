@@ -1,0 +1,11 @@
+color_camera_intrinsics: calibration_type: 3 TANGO_CALIBRATION_POLYNOMIAL_3_PARAMETERS
+color_camera_intrinsics: camera_id: 0  TANGO_CAMERA_COLOR
+color_camera_intrinsics: cx: 637.475000
+color_camera_intrinsics: cy: 358.318000
+color_camera_intrinsics: distortion 1: 0.212249
+color_camera_intrinsics: distortion 2: -0.603557
+color_camera_intrinsics: distortion 3: 0.575261
+color_camera_intrinsics: fx: 1042.110000
+color_camera_intrinsics: fy: 1042.370000
+color_camera_intrinsics: height: 720
+color_camera_intrinsics: width: 1280
