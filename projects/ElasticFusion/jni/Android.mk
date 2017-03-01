@@ -1,6 +1,13 @@
 LOCAL_PATH := $(call my-dir)
 PROJECT_ROOT:= $(call my-dir)/../..
 
+
+include $(CLEAR_VARS)
+OPENCV_CAMERA_MODULES:=on
+OPENCV_INSTALL_MODULES:=off
+OPENCV_LIB_TYPE := STATIC
+include /Users/jiahaolin/Downloads/OpenCV-android-sdk/sdk/native/jni/OpenCV.mk 
+
 include $(CLEAR_VARS)
 LOCAL_MODULE           := elasticfusion 
 
@@ -15,7 +22,11 @@ LOCAL_SRC_FILES := tango_handler.cc \
 LOCAL_C_INCLUDES := $(PROJECT_ROOT)/tango_gl/include \
                     $(PROJECT_ROOT)/third_party/glm/               
 
-LOCAL_LDLIBS           := -landroid -llog -lGLESv3 -L$(SYSROOT)/usr/lib
+LOCAL_C_INCLUDES 		+= $(LOCAL_PATH)/include \
+						   $(LOCAL_PATH)
+						   
+LOCAL_LDLIBS         += -lstdc++ -L$(SYSROOT)/usr/lib -llog -lm -lc -ldl -landroid -lGLESv3 -lz
+
 LOCAL_CC	             := /usr/bin/gcc-4.8
 
 include $(BUILD_SHARED_LIBRARY)

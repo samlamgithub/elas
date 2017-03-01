@@ -1,16 +1,16 @@
-
-
 #ifndef HELLO_MOTION_TRACKING_TANGO_HANDLER_H_
 #define HELLO_MOTION_TRACKING_TANGO_HANDLER_H_
 
 #include <android/log.h>
 #include <jni.h>
+//#include <opencv2/core/core.hpp>
 
 #include <cstdio>
 #include <string>
 #include <cstdlib>
 #include <atomic>
 
+#include "gl_util.h"
 #include "tango_client_api.h"   // NOLINT
 #include "tango_support_api.h"  // NOLINT
 
@@ -35,6 +35,14 @@ class TangoHandler {
     }
   }
 
+
+  // These provide the frame size for RawFrame events
+   static int get_frame_height();
+   static int get_frame_width();
+
+   static void set_display_view_port(int width, int height);
+     static void set_frame_view_port(int width, int height);
+     static void process_frame_event(void*,TangoCameraId);
   // Check if the Tango Core version is compatible with this app.
   // If not, the applicaiton will exit.
   //
@@ -56,6 +64,9 @@ class TangoHandler {
 
  private:
   TangoConfig tango_config_;
+  const static TangoCameraId camera_type_ = TANGO_CAMERA_COLOR;
+  static std::unique_ptr<GlCameraFrame> gl_camera_frame_;
+  static std::unique_ptr<double> frame_timestamp_;
 };
 }  // namespace hello_motion_tracking
 

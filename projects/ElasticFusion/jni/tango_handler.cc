@@ -5,6 +5,8 @@
 #include <sstream>
 #include "hello_motion_tracking/tango_handler.h"
 
+#include "gl_util.cc"
+
 namespace {
 constexpr int kTangoCoreMinimumVersion = 9377;
 void onPoseAvailable(void*, const TangoPoseData* pose) {
@@ -16,6 +18,9 @@ void onPoseAvailable(void*, const TangoPoseData* pose) {
 }  // anonymous namespace.
 
 namespace hello_motion_tracking {
+
+std::unique_ptr<GlCameraFrame> TangoHandler::gl_camera_frame_;
+std::unique_ptr<double> TangoHandler::frame_timestamp_;
 
 void TangoHandler::OnCreate(JNIEnv* env, jobject caller_activity) {
   // Check the installed version of the TangoCore.  If it is too old, then
@@ -58,6 +63,104 @@ void TangoHandler::OnTangoServiceConnected(JNIEnv* env, jobject iBinder) {
     LOGE("TangoHandler::ConnectTango, TangoService_connect error.");
     std::exit(EXIT_SUCCESS);
   }
+
+  TangoErrorType ret = TangoConfig_setBool(tango_config_, "config_enable_color_camera", true);
+   if (ret != TANGO_SUCCESS) {
+     LOGE("TangoHandler Failed to enable color camera.");
+     std::exit(EXIT_SUCCESS);
+   }
+
+   // Set auto-recovery for motion tracking as requested by the user.
+   ret =
+           TangoConfig_setBool(tango_config_, "config_enable_auto_recovery", true);
+   if (ret != TANGO_SUCCESS) {
+     LOGE(
+             "TangoHandler: config_enable_auto_recovery() failed with error"
+                     "code: %d",
+             ret);
+     std::exit(EXIT_SUCCESS);
+   }
+
+   // Enable depth.
+   ret = TangoConfig_setBool(tango_config_, "config_enable_depth", true);
+   if (ret != TANGO_SUCCESS) {
+     LOGE(
+             "TangoHandler: config_enable_depth() failed with error"
+                     "code: %d",
+             ret);
+     std::exit(EXIT_SUCCESS);
+   }
+
+   // Need to specify the depth_mode as XYZC.
+   ret = TangoConfig_setInt32(tango_config_, "config_depth_mode",
+                              TANGO_POINTCLOUD_XYZC);
+   if (ret != TANGO_SUCCESS) {
+     LOGE(
+             "TangoHandler: 'config_depth_mode' configuration flag with error"
+                     " code: %d",
+             ret);
+     std::exit(EXIT_SUCCESS);
+   }
+
+
+  // Initialise and OpenGL camera frame class for rendering raw camera input
+  gl_camera_frame_.reset(new GlCameraFrame());
+  TangoCameraIntrinsics camera_intrinsics;
+    TangoService_getCameraIntrinsics(camera_type_, &camera_intrinsics);
+    set_frame_view_port(camera_intrinsics.width,camera_intrinsics.height);
+    // Connect callbacks for new camera frames to the OpenGL GlCameraFrame class
+    frame_timestamp_.reset(new double);
+    TangoErrorType   status = TangoService_connectTextureId(
+          camera_type_, gl_camera_frame_->texture_id(), nullptr,
+          &TangoHandler::process_frame_event);
+    if (status != TANGO_SUCCESS) {
+      LOGE("CameraInterface: Failed to connect texture callbacks for the camera.");
+      std::exit(EXIT_SUCCESS);
+    }
+}
+
+
+void TangoHandler::set_display_view_port(int width, int height) {
+  if (gl_camera_frame_) {
+	  gl_camera_frame_->set_display_view_port(width,height);
+  }
+}
+
+void TangoHandler::set_frame_view_port(int width, int height) {
+  if (gl_camera_frame_) {
+	  gl_camera_frame_->set_frame_view_port(width,height);
+  }
+}
+
+int TangoHandler::get_frame_height() {
+  if (gl_camera_frame_) {
+    return gl_camera_frame_->get_frame_view_height();
+  }
+  return 0;
+}
+
+int TangoHandler::get_frame_width() {
+  if (gl_camera_frame_) {
+    return gl_camera_frame_->get_frame_view_width();
+  }
+  return 0;
+}
+
+typedef long long int timestamp_t;
+
+// Tango specific public functions
+void TangoHandler::process_frame_event(void* context, TangoCameraId id) {
+	 TangoErrorType status = TangoService_updateTexture(camera_type_, frame_timestamp_.get());
+	  if (status == TANGO_SUCCESS && (*frame_timestamp_) > 0) {
+	    if (gl_camera_frame_) {
+//	      gl_camera_frame_->render();
+	      std::shared_ptr<unsigned char> frame = gl_camera_frame_->get_frame();
+	      if (frame) {
+	    	  timestamp_t timestamp_nanoseconds = static_cast<int64_t>((*frame_timestamp_) * 1000000000.0);
+	          LOGI("raw frame(t): %lld", timestamp_nanoseconds);
+	      }
+	    }
+	  }
 }
 
 
